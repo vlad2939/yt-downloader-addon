@@ -52,6 +52,7 @@ app.get('/api/info', async (req, res) => {
     res.json({
       title: info.title,
       thumbnail: info.thumbnail,
+      duration: info.duration_string || info.duration,
       resolutions: resolutions
     });
   } catch (error: any) {
