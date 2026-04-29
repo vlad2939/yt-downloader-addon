@@ -83,7 +83,7 @@ app.get('/api/prepare', (req, res) => {
       const filePath = join(tempDir, `${fileId}.mp4`);
 
       await youtubedl(url, {
-          format: `bestvideo[ext=mp4][height<=${height}]+bestaudio[ext=m4a]/best[ext=mp4]/best`,
+          format: `bestvideo[height<=${height}]+bestaudio/best`,
           mergeOutputFormat: 'mp4',
           output: filePath,
           noWarnings: true
