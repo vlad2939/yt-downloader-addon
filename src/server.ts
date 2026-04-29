@@ -44,7 +44,7 @@ app.get('/api/info', async (req, res) => {
     // Obținem DOAR înălțimile video disponibile pentru selecție clară (ex: 1080, 2160)
     const heights = new Set<number>();
     info.formats?.forEach((f: any) => {
-        if (f.height && f.height >= 480) heights.add(f.height);
+        if (f.height && f.height > 480) heights.add(f.height);
     });
     // Sortate descrescător
     const resolutions = Array.from(heights).sort((a, b) => b - a);
