@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     videoInfoContainer.classList.add('hidden');
 
     try {
-      const response = await fetch(`/api/info?url=${encodeURIComponent(url)}`);
+      const response = await fetch(`./api/info?url=${encodeURIComponent(url)}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const download = (itag) => {
-    const downloadUrl = `/api/download?url=${encodeURIComponent(currentUrl)}&itag=${itag}`;
+    const downloadUrl = `./api/download?url=${encodeURIComponent(currentUrl)}&itag=${itag}`;
     window.location.href = downloadUrl;
   };
 
