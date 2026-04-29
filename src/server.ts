@@ -157,6 +157,10 @@ app.get('/api/file', (req, res) => {
 const publicFolder = join(process.cwd(), 'public');
 app.use(express.static(publicFolder));
 
+app.get('/README.md', (req, res) => {
+    res.sendFile(join(process.cwd(), 'README.md'));
+});
+
 /**
  * Start the server
  */
