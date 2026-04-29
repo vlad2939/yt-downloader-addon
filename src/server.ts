@@ -91,8 +91,9 @@ app.get('/api/prepare', (req, res) => {
           options.output = join(tempDir, `${fileId}.%(ext)s`);
       } else if (type === 'video_only') {
           filename = `${title}_${height}p_video.mp4`;
-          options.format = `bestvideo[height<=${height}][ext=mp4]/bestvideo[height<=${height}]/best`;
-          options.output = join(tempDir, `${fileId}.mp4`);
+          options.format = `bestvideo[height<=${height}]/bestvideo/best`;
+          options.remuxVideo = 'mp4';
+          options.output = join(tempDir, `${fileId}.%(ext)s`);
       } else {
           filename = `${title}_${height}p.mp4`;
           options.format = `bestvideo[height<=${height}]+bestaudio/best`;
