@@ -107,10 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const downloadMuxed = async (height) => {
     setLoading(true);
-    searchBtnText.textContent = \`Procesăm ${height}p pe server...\`;
+    searchBtnText.textContent = `Procesăm ${height}p pe server...`;
     
     try {
-      const response = await fetch(\`./api/prepare?url=\${encodeURIComponent(currentUrl)}&height=\${height}\`);
+      const response = await fetch(`./api/prepare?url=${encodeURIComponent(currentUrl)}&height=${height}`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Totul a mers ok pe server, e timpul să îl transmitem către browser
       searchBtnText.textContent = 'Descărcare gata!';
-      window.location.href = \`./api/file?id=\${data.id}&filename=\${encodeURIComponent(data.filename)}\`;
+      window.location.href = `./api/file?id=${data.id}&filename=${encodeURIComponent(data.filename)}`;
       
       // Reset text după 3 secunde rezonabile pt inițiere descărcare
       setTimeout(() => {
