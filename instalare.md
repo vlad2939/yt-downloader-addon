@@ -4,22 +4,25 @@ Acest tutorial îți va arăta cum să adaugi și să rulezi aplicația YT Downl
 
 ## 1. Pregătirea repository-ului pe GitHub
 
-1. Asigură-te că toate fișierele proiectului sunt încărcate în contul tău GitHub (`vlad2939`) într-un repository nou (de exemplu, o să-l numim `yt-downloader-addon`).
-2. Structura pe GitHub ar trebui să arate astfel (în rădăcina repository-ului):
-   ```text
-   ├── Dockerfile
-   ├── config.yaml
-   ├── package.json
-   ├── tsconfig.json
-   ├── src/
-   │   └── server.ts
-   └── public/
-       ├── index.html
-       ├── style.css
-       └── app.js
-   ```
+Home Assistant impune o structură specifică pentru "Add-on repositories". 
+**Atenție:** Fișierul `repository.yaml` trebuie să existe obligatoriu în folderul principal (rădăcina) repository-ului, iar fișierele propriu-zise ale aplicației trebuie așezate într-un sub-folder separat (de exemplu: `yt_downloader`).
 
-*Notă: Dacă preferi ca repository-ul tău să poată susține mai multe addon-uri pe viitor, poți pune aceste fișiere într-un sub-folder numit `yt-downloader` și să adaugi un fișier `repository.json` gol, sau cu detaliile tale, în folderul principal (rădăcină).*
+1. Asigură-te că toate fișierele proiectului sunt încărcate în contul tău GitHub (`vlad2939`) într-un repository nou (să spunem `yt-downloader-addon`).
+2. Structura EXACTĂ pe GitHub **trebuie** să arate astfel:
+   ```text
+   ├── repository.yaml
+   └── yt_downloader/
+       ├── Dockerfile
+       ├── config.yaml
+       ├── package.json
+       ├── tsconfig.json
+       ├── src/
+       │   └── server.ts
+       └── public/
+           ├── index.html
+           ├── style.css
+           └── app.js
+   ```
 
 ## 2. Adăugarea repository-ului în Home Assistant
 
@@ -39,9 +42,12 @@ Acest tutorial îți va arăta cum să adaugi și să rulezi aplicația YT Downl
 1. Dă click pe panoul **YT Downloader** din magazin.
 2. Apasă pe **Install (Instalare)**.
    *(Atenție: Procesul poate dura până la 5-10 minute, deoarece Home Assistant de pe NUC-ul tău va compila ("build") un container de Docker curat pe baza fișierului `Dockerfile`).*
-3. Odată instalarea terminată cu succes, bifează următoarele opțiuni pe pagina addon-ului:
+3. Odată instalarea terminată cu succes, vei reveni la panoul addon-ului. Aici, **este extrem de important să bifezi opțiunile următoare**:
    - **Start on boot** (Pornire automată la bootare)
-   - **Show in sidebar** (Afișează pe bara laterală - pentru acces rapid direct din meniul stâng Home Assistant!)
+   - **Show in sidebar** (Afișează pe bara laterală) -> **ACESTA ESTE BUTONUL CARA FACE SĂ APARĂ ICONIȚA ÎN SIDE PANEL!**
+
+Prin activarea modului Ingress în `config.yaml`, Home Assistant rutează traficul intern astfel încât când apeși pe "YT Downloader" din meniul din stânga, interfața grafică pe care tocmai am creat-o va fi redată perfect și integrat (ca și cum ar face parte nativ din aplicația HA), sub titlul de YT Downloader cu o pictogramă YouTube (`mdi:youtube`). 
+
 4. Apasă pe butonul **Start**.
 5. Pentru a vedea dacă totul a pornit corect, deschide tab-ul **Log** din partea de sus a paginii addon-ului. După câteva secunde, ar trebui să apară mesajul: `Node Express server listening on http://0.0.0.0:3000`.
 
