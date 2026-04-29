@@ -137,13 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
       btnGrid.className = 'grid grid-cols-2 gap-2 mt-auto';
 
       const btnVA = document.createElement('button');
-      btnVA.className = 'flex items-center justify-center gap-1.5 p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] sm:text-xs font-semibold transition-all shadow-sm';
-      btnVA.innerHTML = `<span class="material-icons text-[16px]">stars</span> Vid+Aud`;
+      btnVA.className = 'flex items-center justify-center gap-1 p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] sm:text-xs font-bold transition-all shadow-sm';
+      btnVA.innerHTML = `<span class="material-icons text-[14px]">stars</span> Vid+Aud`;
       btnVA.onclick = () => downloadMuxed(res, 'video_audio');
 
       const btnV = document.createElement('button');
-      btnV.className = 'flex items-center justify-center gap-1.5 p-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-950 text-[11px] sm:text-xs font-semibold transition-all shadow-sm';
-      btnV.innerHTML = `<span class="material-icons text-[16px]">videocam</span> Video`;
+      btnV.className = 'flex items-center justify-center gap-1 p-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-950 text-[11px] sm:text-xs font-bold transition-all shadow-sm';
+      btnV.innerHTML = `<span class="material-icons text-[14px]">videocam</span> Video`;
       btnV.onclick = () => downloadMuxed(res, 'video_only');
 
       btnGrid.appendChild(btnVA);
