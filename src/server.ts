@@ -44,7 +44,7 @@ app.get('/api/info', async (req, res) => {
     // Obținem DOAR înălțimile video disponibile pentru selecție clară (ex: 1080, 2160)
     const heights = new Set<number>();
     info.formats?.forEach((f: any) => {
-        if (f.height && f.height >= 144) heights.add(f.height);
+        if (f.height && f.height >= 480) heights.add(f.height);
     });
     // Sortate descrescător
     const resolutions = Array.from(heights).sort((a, b) => b - a);
@@ -66,6 +66,7 @@ const activeJobs = new Map<string, { status: string, error?: string, filename?: 
 app.get('/api/prepare', (req, res) => {
   const url = req.query['url'] as string;
   const height = req.query['height'] as string || '1080';
+  const type = req.query['type'] as string || 'video_audio';
   
   if (!url) {
     res.status(400).send({ error: 'Invalid or missing YouTube URL' });
@@ -79,15 +80,27 @@ app.get('/api/prepare', (req, res) => {
     try {
       const info: any = await youtubedl(url, { dumpJson: true, noWarnings: true });
       const title = (info.title || 'video').replace(/[^\w\s-]/gi, '_');
-      const filename = `${title}_${height}p.mp4`;
-      const filePath = join(tempDir, `${fileId}.mp4`);
+      
+      let filename = '';
+      let options: any = { noWarnings: true };
 
-      await youtubedl(url, {
-          format: `bestvideo[height<=${height}]+bestaudio/best`,
-          mergeOutputFormat: 'mp4',
-          output: filePath,
-          noWarnings: true
-      });
+      if (type === 'audio_only') {
+          filename = `${title}_audio.mp3`;
+          options.extractAudio = true;
+          options.audioFormat = 'mp3';
+          options.output = join(tempDir, `${fileId}.%(ext)s`);
+      } else if (type === 'video_only') {
+          filename = `${title}_${height}p_video.mp4`;
+          options.format = `bestvideo[height<=${height}][ext=mp4]/bestvideo[height<=${height}]/best`;
+          options.output = join(tempDir, `${fileId}.mp4`);
+      } else {
+          filename = `${title}_${height}p.mp4`;
+          options.format = `bestvideo[height<=${height}]+bestaudio/best`;
+          options.mergeOutputFormat = 'mp4';
+          options.output = join(tempDir, `${fileId}.mp4`);
+      }
+
+      await youtubedl(url, options);
 
       activeJobs.set(fileId, { status: 'done', filename });
     } catch (error: any) {
@@ -118,10 +131,13 @@ app.get('/api/file', (req, res) => {
     let filename = req.query['filename'] as string || 'video.mp4';
     if (!id) return res.status(400).send('Missing file id');
 
-    // Asigurăm că extensia e bună
-    if (!filename.endsWith('.mp4')) filename += '.mp4';
+    let filePath = join(tempDir, `${id}.mp4`);
+    if (filename.endsWith('.mp3')) {
+        filePath = join(tempDir, `${id}.mp3`);
+    } else {
+        if (!filename.endsWith('.mp4')) filename += '.mp4';
+    }
 
-    const filePath = join(tempDir, `${id}.mp4`);
     if (!fs.existsSync(filePath)) {
         return res.status(404).send('Fișierul nu există sau descărcarea a expirat.');
     }
