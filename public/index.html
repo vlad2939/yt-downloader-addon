@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YT Downloader</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-[#0A0C10] text-slate-200 font-sans selection:bg-rose-500/30 flex flex-col">
+  <!-- Header -->
+  <header class="flex justify-between items-center px-8 py-8 w-full max-w-7xl mx-auto">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-tr from-rose-500 to-amber-500 rounded-xl flex items-center justify-center text-white">
+        <span class="material-icons">download</span>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-white">YT_Downloader</h1>
+    </div>
+    <a href="https://github.com" target="_blank" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+      <span class="material-icons">code</span>
+    </a>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col items-center justify-start gap-12 px-6 py-8 md:py-12 mx-auto w-full max-w-5xl">
+    <div class="w-full max-w-3xl text-center space-y-4">
+      <h2 class="text-4xl md:text-5xl font-extrabold text-white">Descarcă orice video din YouTube.</h2>
+      <p class="text-slate-400 text-lg">Suportă rezoluții multiple, inclusiv 4K. Simplu, rapid, și fără reclame.</p>
+    </div>
+
+    <!-- Search Box -->
+    <div class="w-full max-w-3xl relative group mx-auto">
+      <div class="relative flex items-center">
+        <span class="material-icons absolute left-6 text-slate-500 pointer-events-none">link</span>
+        <input 
+          type="text" 
+          id="urlInput"
+          placeholder="Lipește linkul YouTube aici (ex: https://youtube.com/watch?v=...)" 
+          class="w-full h-16 bg-slate-900/50 border border-slate-800 rounded-2xl pl-16 pr-32 md:pr-40 text-slate-100 text-base md:text-lg focus:outline-none focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/10 placeholder-slate-600 shadow-2xl transition-all"
+        />
+        <button 
+          id="searchBtn"
+          class="absolute right-2 top-2 bottom-2 px-4 md:px-8 bg-rose-500 text-white rounded-xl font-bold shadow-lg hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors uppercase tracking-wide text-xs md:text-sm"
+        >
+          <span id="searchBtnIcon" class="material-icons text-sm hidden animate-spin">autorenew</span>
+          <span id="searchBtnText">Caută</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorContainer" class="hidden w-full max-w-3xl mx-auto p-4 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-xl items-center gap-3">
+      <span class="material-icons">error_outline</span>
+      <p id="errorText" class="font-medium"></p>
+    </div>
+
+    <!-- Video Info Container -->
+    <div id="videoInfoContainer" class="hidden grid grid-cols-1 md:grid-cols-12 gap-8 w-full">
+      <!-- Left: Thumbnail & basic info -->
+      <div class="col-span-1 md:col-span-5 bg-slate-900/40 rounded-3xl border border-slate-800/50 p-5 shadow-inner self-start">
+        <div class="aspect-video bg-slate-800 rounded-xl overflow-hidden mb-4 relative">
+          <img id="videoThumb" src="" alt="Thumbnail" class="w-full h-full object-cover" referrerpolicy="no-referrer" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4"></div>
+        </div>
+        <div class="flex flex-col gap-1 px-1">
+          <span class="text-xs uppercase tracking-widest text-slate-500 font-bold">Titlu</span>
+          <span id="videoTitle" class="text-sm text-slate-300 font-medium leading-snug"></span>
+        </div>
+      </div>
+      
+      <!-- Right: Formats -->
+      <div class="col-span-1 md:col-span-7 space-y-4 flex flex-col">
+        <div class="text-sm font-bold text-slate-400 uppercase tracking-widest">Alege Calitatea</div>
+        <div id="formatsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1">
+          <!-- Formats will be injected here -->
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script src="app.js"></script>
+</body>
+</html>
