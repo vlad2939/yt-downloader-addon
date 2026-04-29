@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Theme logic
+  const htmlEl = document.documentElement;
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  
+  const updateThemeIcon = () => {
+    if (htmlEl.classList.contains('dark')) {
+      themeIcon.textContent = 'light_mode';
+    } else {
+      themeIcon.textContent = 'dark_mode';
+    }
+  };
+
+  themeToggleBtn.addEventListener('click', () => {
+    htmlEl.classList.toggle('dark');
+    updateThemeIcon();
+  });
+  updateThemeIcon(); // init
+
+  // Element Refs
   const urlInput = document.getElementById('urlInput');
   const searchBtn = document.getElementById('searchBtn');
   const searchBtnText = document.getElementById('searchBtnText');
@@ -35,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     errorContainer.classList.add('flex');
     errorText.textContent = msg;
     videoInfoContainer.classList.add('hidden');
+    videoInfoContainer.classList.remove('grid');
   };
 
   const hideError = () => {
@@ -53,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setLoading(true);
     hideError();
     videoInfoContainer.classList.add('hidden');
+    videoInfoContainer.classList.remove('grid');
 
     try {
       const response = await fetch(`./api/info?url=${encodeURIComponent(url)}`);
@@ -79,20 +101,20 @@ document.addEventListener('DOMContentLoaded', () => {
     formatsGrid.innerHTML = '';
 
     const audioBtn = document.createElement('button');
-    audioBtn.className = 'col-span-full p-4 bg-slate-900/50 border border-slate-800 rounded-2xl flex items-center justify-between hover:bg-slate-800/50 hover:border-emerald-500 group shadow-sm hover:shadow-lg transition-all text-left w-full mb-2';
+    audioBtn.className = 'col-span-full p-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 group shadow-sm transition-all text-left w-full mb-1';
     audioBtn.onclick = () => downloadMuxed('1080', 'audio_only');
     audioBtn.innerHTML = `
         <div class="flex flex-col items-start gap-1">
           <div class="flex items-center gap-2">
-            <span class="text-slate-200 font-bold group-hover:text-white transition-colors">Extrage Doar Audio</span>
-            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500 text-white">MP3</span>
+            <span class="text-slate-800 dark:text-slate-200 font-bold transition-colors text-base">Extrage Doar Audio</span>
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 uppercase tracking-widest">MP3</span>
           </div>
-          <div class="text-xs text-emerald-400 font-mono flex items-center gap-2">
-             <span class="material-icons text-[12px] w-[12px] h-[12px] leading-none">music_note</span>
+          <div class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5 mt-1">
+             <span class="material-icons text-[14px]">music_note</span>
              Fișier Audio (.mp3)
           </div>
         </div>
-        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-800 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition-all overflow-hidden flex-shrink-0">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-500 dark:bg-slate-900 dark:text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition-all flex-shrink-0 shadow-sm border border-slate-200 dark:border-slate-700">
           <span class="material-icons text-[20px]">download</span>
         </div>
     `;
@@ -101,27 +123,27 @@ document.addEventListener('DOMContentLoaded', () => {
     resolutions.forEach(res => {
       const isHighRes = res >= 1440;
       const resContainer = document.createElement('div');
-      resContainer.className = 'p-4 bg-slate-900/50 border border-slate-800 rounded-2xl flex flex-col gap-3 group shadow-sm text-left w-full hover:border-slate-700 transition-colors border-t-2 ' + (isHighRes ? 'border-t-rose-500' : 'border-t-sky-500');
+      resContainer.className = 'p-5 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col gap-4 shadow-sm text-left w-full transition-all hover:border-slate-300 dark:hover:border-slate-600 border-t-[3px] ' + (isHighRes ? 'border-t-orange-500 dark:border-t-orange-500' : 'border-t-blue-500 dark:border-t-blue-500');
 
       const header = document.createElement('div');
-      header.className = 'flex items-center gap-2';
+      header.className = 'flex items-center justify-between mb-1';
       header.innerHTML = `
-            <span class="text-slate-200 font-bold">${res}p</span>
-            ${isHighRes ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500 text-white">4K/MAX</span>` : ''}
+            <span class="text-slate-800 dark:text-slate-200 font-extrabold text-[1.35rem] tracking-tight">${res}p</span>
+            ${isHighRes ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 uppercase tracking-widest">4K/MAX</span>` : ''}
       `;
       resContainer.appendChild(header);
 
       const btnGrid = document.createElement('div');
-      btnGrid.className = 'grid grid-cols-2 gap-2';
+      btnGrid.className = 'grid grid-cols-2 gap-2 mt-auto';
 
       const btnVA = document.createElement('button');
-      btnVA.className = 'flex items-center justify-center gap-2 p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-colors';
-      btnVA.innerHTML = `<span class="material-icons text-[14px]">stars</span> Vid+Aud (.mp4)`;
+      btnVA.className = 'flex items-center justify-center gap-1.5 p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-700 dark:hover:bg-slate-600 text-[11px] sm:text-xs font-semibold transition-all shadow-sm';
+      btnVA.innerHTML = `<span class="material-icons text-[16px]">stars</span> Vid+Aud`;
       btnVA.onclick = () => downloadMuxed(res, 'video_audio');
 
       const btnV = document.createElement('button');
-      btnV.className = 'flex items-center justify-center gap-2 p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors border border-slate-700';
-      btnV.innerHTML = `<span class="material-icons text-[14px]">videocam</span> Doar Video`;
+      btnV.className = 'flex items-center justify-center gap-1.5 p-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-950 text-[11px] sm:text-xs font-semibold transition-all shadow-sm';
+      btnV.innerHTML = `<span class="material-icons text-[16px]">videocam</span> Video`;
       btnV.onclick = () => downloadMuxed(res, 'video_only');
 
       btnGrid.appendChild(btnVA);
@@ -132,15 +154,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     videoInfoContainer.classList.remove('hidden');
+    videoInfoContainer.classList.add('grid');
   };
 
   const downloadMuxed = async (height, type = 'video_audio') => {
     setLoading(true);
 
     let typeText = 'Procesare...';
-    if (type === 'audio_only') typeText = 'Pregătire Audio MP3...';
+    if (type === 'audio_only') typeText = 'Pregătire MP3...';
     else if (type === 'video_only') typeText = `Pregătire Video ${height}p...`;
-    else typeText = `Pregătire Video+Audio ${height}p...`;
+    else typeText = `Video+Audio ${height}p...`;
 
     searchBtnText.textContent = typeText;
     
@@ -198,4 +221,51 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchInfo();
     }
   });
+
+  // Readme Popup Logic
+  const readmeBtn = document.getElementById('readmeBtn');
+  const readmeModal = document.getElementById('readmeModal');
+  const closeReadmeBtn = document.getElementById('closeReadmeBtn');
+  const readmeBackdrop = document.getElementById('readmeBackdrop');
+  const readmeMarkdownContent = document.getElementById('readmeMarkdownContent');
+
+  const openReadme = async () => {
+    readmeModal.classList.remove('hidden');
+    readmeModal.classList.add('flex');
+    // Enable pointer events
+    readmeModal.classList.remove('pointer-events-none');
+    
+    // Slight delay for animation
+    setTimeout(() => {
+      readmeModal.classList.remove('opacity-0');
+      document.getElementById('readmeContentPanel').classList.remove('scale-95');
+      document.getElementById('readmeContentPanel').classList.add('scale-100');
+    }, 10);
+
+    // Load README.md
+    try {
+      const res = await fetch('./README.md');
+      if (!res.ok) throw new Error('Nu am putut prelua fisierul README.md');
+      const text = await res.text();
+      // Parse with marked
+      readmeMarkdownContent.innerHTML = marked.parse(text);
+    } catch(err) {
+      readmeMarkdownContent.innerHTML = '<p class="text-rose-500 font-semibold text-center mt-4">Eroare la încărcarea README.md</p>';
+    }
+  };
+
+  const closeReadme = () => {
+    readmeModal.classList.add('opacity-0');
+    document.getElementById('readmeContentPanel').classList.add('scale-95');
+    document.getElementById('readmeContentPanel').classList.remove('scale-100');
+    readmeModal.classList.add('pointer-events-none');
+    setTimeout(() => {
+      readmeModal.classList.add('hidden');
+      readmeModal.classList.remove('flex');
+    }, 300);
+  };
+
+  readmeBtn.addEventListener('click', openReadme);
+  closeReadmeBtn.addEventListener('click', closeReadme);
+  readmeBackdrop.addEventListener('click', closeReadme);
 });
