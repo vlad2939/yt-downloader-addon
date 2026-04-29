@@ -59,9 +59,11 @@ app.get('/api/info', async (req, res) => {
   }
 });
 
-// Ruta nouă care descarcă separat audio și video pe server, le lipește (mux), și creează MP4-ul final
-app.get('/api/prepare', async (req, res) => {
-  req.setTimeout(0); // Fără timeout pentru operațiuni care pot dura
+// Stocăm task-urile de descărcare
+const activeJobs = new Map<string, { status: string, error?: string, filename?: string }>();
+
+// Ruta care inițiază descărcarea și muxarea pe server
+app.get('/api/prepare', (req, res) => {
   const url = req.query['url'] as string;
   const height = req.query['height'] as string || '1080';
   
@@ -70,27 +72,44 @@ app.get('/api/prepare', async (req, res) => {
     return;
   }
 
-  try {
-    const info: any = await youtubedl(url, { dumpJson: true, noWarnings: true });
-    const title = (info.title || 'video').replace(/[^\w\s-]/gi, '_');
-    const filename = `${title}_${height}p.mp4`;
+  const fileId = randomUUID();
+  activeJobs.set(fileId, { status: 'processing' });
+  
+  const processDownload = async () => {
+    try {
+      const info: any = await youtubedl(url, { dumpJson: true, noWarnings: true });
+      const title = (info.title || 'video').replace(/[^\w\s-]/gi, '_');
+      const filename = `${title}_${height}p.mp4`;
+      const filePath = join(tempDir, `${fileId}.mp4`);
 
-    const fileId = randomUUID();
-    const filePath = join(tempDir, `${fileId}.mp4`);
+      await youtubedl(url, {
+          format: `bestvideo[ext=mp4][height<=${height}]+bestaudio[ext=m4a]/best[ext=mp4]/best`,
+          mergeOutputFormat: 'mp4',
+          output: filePath,
+          noWarnings: true
+      });
 
-    // Instrucțiunea exactă care găsește cel mai bun video de o rezoluție + cel mai bun audio, și le dă mux cu ffmpeg în mp4 direct
-    await youtubedl(url, {
-        format: `bestvideo[ext=mp4][height<=${height}]+bestaudio[ext=m4a]/best[ext=mp4]/best`,
-        mergeOutputFormat: 'mp4',
-        output: filePath,
-        noWarnings: true
-    });
+      activeJobs.set(fileId, { status: 'done', filename });
+    } catch (error: any) {
+      console.error("BACKGROUND JOB ERROR:", error);
+      activeJobs.set(fileId, { status: 'error', error: error.message || String(error) });
+    }
+  };
 
-    res.json({ id: fileId, filename });
-  } catch (error: any) {
-    console.error(error);
-    res.status(500).json({ error: 'Procesarea/muxarea pe server a eșuat.' });
+  // Pornește în background
+  processDownload();
+
+  res.json({ id: fileId });
+});
+
+// Ruta pentru a verifica statusul
+app.get('/api/status', (req, res) => {
+  const id = req.query['id'] as string;
+  const job = activeJobs.get(id);
+  if (!job) {
+    return res.status(404).json({ error: 'Job not found' });
   }
+  res.json(job);
 });
 
 // Ruta de transmitere a fișierului rezultat

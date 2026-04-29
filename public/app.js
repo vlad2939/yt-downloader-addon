@@ -107,25 +107,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const downloadMuxed = async (height) => {
     setLoading(true);
-    searchBtnText.textContent = `Procesăm ${height}p pe server...`;
+    searchBtnText.textContent = `Pregătire pe server...`;
     
     try {
       const response = await fetch(`./api/prepare?url=${encodeURIComponent(currentUrl)}&height=${height}`);
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Eroare la procesarea fișierului pe server.');
+        throw new Error(data.error || 'Eroare la inițierea descărcării.');
       }
       
-      // Totul a mers ok pe server, e timpul să îl transmitem către browser
-      searchBtnText.textContent = 'Descărcare gata!';
-      window.location.href = `./api/file?id=${data.id}&filename=${encodeURIComponent(data.filename)}`;
+      const fileId = data.id;
       
-      // Reset text după 3 secunde rezonabile pt inițiere descărcare
-      setTimeout(() => {
-        setLoading(false);
-        searchBtnText.textContent = 'Caută';
-      }, 3000);
+      const checkStatus = async () => {
+          try {
+              const statusRes = await fetch(`./api/status?id=${fileId}`);
+              const statusData = await statusRes.json();
+              
+              if (statusData.status === 'processing') {
+                  searchBtnText.textContent = `Procesare/Muxare (${height}p)...`;
+                  setTimeout(checkStatus, 3000); // Polling la 3 secunde
+              } else if (statusData.status === 'done') {
+                  searchBtnText.textContent = 'Transfer browser...';
+                  window.location.href = `./api/file?id=${fileId}&filename=${encodeURIComponent(statusData.filename)}`;
+                  
+                  setTimeout(() => {
+                      setLoading(false);
+                      searchBtnText.textContent = 'Caută';
+                  }, 3000);
+              } else if (statusData.status === 'error') {
+                  throw new Error(statusData.error || 'Eroare la procesarea internă.');
+              }
+          } catch (err) {
+              console.error(err);
+              showError(err.message);
+              setLoading(false);
+              searchBtnText.textContent = 'Caută';
+          }
+      };
+      
+      // Pornim polling-ul
+      setTimeout(checkStatus, 3000);
       
     } catch (err) {
       console.error(err);
