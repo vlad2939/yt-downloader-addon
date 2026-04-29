@@ -17,7 +17,7 @@ ports:
 ports_description:
   3000/tcp: "Web Interface"
 webui: "http://[HOST]:[PORT:3000]"
-panel_icon: "mdi:youtube"
+panel_icon: "mdi:download"
 panel_title: "YT Downloader"
 panel_admin: false
 options: {}
