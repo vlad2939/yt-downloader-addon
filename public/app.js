@@ -96,6 +96,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const renderVideoInfo = (info) => {
     videoThumb.src = info.thumbnail;
     videoTitle.textContent = info.title;
+    
+    const videoDuration = document.getElementById('videoDuration');
+    if (info.duration) {
+      let durationText = info.duration;
+      // If it's a number (seconds), format it
+      if (!isNaN(durationText)) {
+        const totalSeconds = parseInt(durationText, 10);
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        if (h > 0) {
+          durationText = `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        } else {
+          durationText = `${m}:${s.toString().padStart(2, '0')}`;
+        }
+      }
+      videoDuration.textContent = durationText;
+      videoDuration.parentElement.classList.remove('hidden');
+      videoDuration.parentElement.classList.add('flex');
+    } else {
+      videoDuration.parentElement.classList.add('hidden');
+      videoDuration.parentElement.classList.remove('flex');
+    }
 
     const resolutions = info.resolutions || [];
     formatsGrid.innerHTML = '';
