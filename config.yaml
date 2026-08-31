@@ -1,8 +1,8 @@
 name: "YT Downloader"
-version: "4.0.0"
+version: "4.0.1"
 slug: "yt_downloader"
 description: "Aplicație web pentru descărcarea videoclipurilor de pe YouTube. Apare direct în meniul lateral (Side Panel) prin Ingress."
-url: "https://github.com/vlad2939/yt-downloader-addon"
+url: "https://github.com/vlad2939/home-assistant-addons"
 arch:
   - aarch64
   - amd64
